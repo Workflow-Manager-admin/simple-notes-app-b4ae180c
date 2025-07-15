@@ -1,11 +1,15 @@
 package com.example.notesfrontend.viewmodel
 
 import android.app.Application
-import androidx.lifecycle.*
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.example.notesfrontend.data.Note
 import com.example.notesfrontend.data.NotesDatabase
 import com.example.notesfrontend.repository.NoteRepository
 import kotlinx.coroutines.launch
+import androidx.lifecycle.Transformations
 
 // PUBLIC_INTERFACE
 class NotesViewModel(application: Application) : AndroidViewModel(application) {
@@ -17,7 +21,7 @@ class NotesViewModel(application: Application) : AndroidViewModel(application) {
     init {
         val dao = NotesDatabase.getDatabase(application).noteDao()
         repo = NoteRepository(dao)
-        notes = androidx.lifecycle.Transformations.switchMap(_searchQuery) { q: String? ->
+        notes = Transformations.switchMap(_searchQuery) { q: String? ->
             if (q.isNullOrBlank()) repo.allNotes else repo.searchNotes(q)
         }
     }
